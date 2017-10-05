@@ -1,8 +1,27 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
 
 class Search extends Component {
+    static propTypes = {
+        books: PropTypes.array.isRequired,
+        onMoveBook: PropTypes.func.isRequired
+    }
+    state = {
+        query: ''
+    }
     render() {
+        const { books } = this.props
+        const { query } = this.state
+        let showingBooks = []
+        if (query) {
+            BooksAPI.search({query, 100}).then((books) => {
+                showingBooks = books
+            })
+        } else {
+            showingBooks = []
+        }
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -20,7 +39,30 @@ class Search extends Component {
                     </div>
                 </div>
                 <div className="search-books-results">
-                    <ol className="books-grid"></ol>
+                    <ol className="books-grid">
+                    {showingBooks.map((book) => (
+                        <li key={book.id}>
+                            <div className="book">
+                                <div className="book-top">
+                                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: "url(" + book.imageLinks.smallThumbnail + ")" }}></div>
+                                        <div className="book-shelf-changer">
+                                        <select
+                                            value={type}
+                                            onChange={(event) => this.props.onMoveBook(book, event.target.value)}>
+                                                <option value="none" disabled>Move to...</option>
+                                                <option value="currentlyReading">Currently Reading</option>
+                                                <option value="wantToRead">Want to Read</option>
+                                                <option value="read">Read</option>
+                                                <option value="none">None</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="book-title">{ book.title }</div>
+                                <div className="book-authors">{ book.authors.join(', ') }</div>
+                            </div>
+                        </li>
+                    ))}
+                    </ol>
                 </div>
             </div>
         )
