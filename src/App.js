@@ -9,15 +9,36 @@ class BooksApp extends React.Component {
     state = {
         books: []
     }
-    moveBook = (book, status) => {
-        this.setState((state) => ({
-            books: state.books.map((b) => {if(b.id===book.id){b.shelf = status}; return b})
-        }));
+    moveBook = (book, shelf) => {
+        console.log(book, shelf);
+        BooksAPI.update(book, shelf)
+            .then((books) => {
+                // New book
+                if(typeof(book.shelf) == 'undefined'){
+                    book.shelf = shelf
+                    books = this.state.books
+                    books.push(book)
+                    this.setState((state) => ({books}));
+                }
+                else{
+                    this.setState((state) => ({
+                        books: state.books.map((b) => {if(b.id===book.id){b.shelf = shelf}; return b})
+                    }));
+                }
+            })
+            .catch((err) => {
+                console.error("error: " + err)
+            })
     }
     componentDidMount() {
-        BooksAPI.getAll().then((books) => {
-            this.setState({ books })
-        })
+        BooksAPI.getAll()
+            .then((books) => {
+                this.setState({ books })
+            })
+            .catch((err) => {
+                console.error("error: " + err)
+                this.setState({ books : [] })
+            })
     }
     render() {
         return (
