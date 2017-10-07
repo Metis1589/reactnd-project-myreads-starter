@@ -8,16 +8,19 @@ class BooksShelf extends Component {
         onMoveBook: PropTypes.func.isRequired
     }
     render() {
-        const { title, type, books } = this.props
-        let showingBooks = books.filter((book) => book.shelf === type)
+        const { title, type, books } = this.props;
+        let showingBooks = books.filter((book) => book.shelf === type);
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{ title }</h2>
                 <div className="bookshelf-books">
+                    { !showingBooks.length && (
+                        <div className='showing-contacts'> No books in the shelf</div>
+                    )}
                     <ol className="books-grid">
                         {showingBooks.map((book) => (
                             <li key={book.id}>
-                                <Book book="{book}" onMoveBook={this.props.onMoveBook}/>
+                                <Book book={book} onMoveBook={this.props.onMoveBook}/>
                             </li>
                         ))}
                     </ol>

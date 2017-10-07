@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import Book from './Book.js';
+import Spinner from 'react-spinner';
 
 class Search extends Component {
     static propTypes = {
@@ -11,22 +12,22 @@ class Search extends Component {
     }
     state = {
         query: '',
-        showingBooks : []
+        showingBooks : [],
+        loaded: true,
     }
     updateQuery = (query) => {
-        this.setState({ query: query.trim()})
+        this.setState({ query: query.trim(), loaded: false});
         BooksAPI.search(query, 100)
             .then((books) => {
-                this.setState({ showingBooks: books })
+                this.setState({ showingBooks: books, loaded: true });
             })
             .catch((err) => {
-                console.error("error: " + err)
-                this.setState({showingBooks:[]})
+                console.error("error: " + err);
+                this.setState({showingBooks:[], loaded: true});
             })
     }
     render() {
-        const { books } = this.props
-        const { query, showingBooks } = this.state
+        const { loaded, query, showingBooks } = this.state
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -41,17 +42,20 @@ class Search extends Component {
                     </div>
                 </div>
                 <div className="search-books-results">
-
-                    { !showingBooks.length && query.trim()!='' && (
-                    <div className='showing-contacts'> No books were found</div>
+                    {!loaded && (
+                        <div className="spinner-wrapper">
+                            <Spinner />
+                        </div>
                     )}
-
+                    {loaded && !showingBooks.length && query.trim()!=='' && (
+                        <div className='showing-contacts'> No books were found</div>
+                    )}
                     <ol className="books-grid">
-                    {showingBooks.map((book) => (
-                        <li key={book.id}>
-                            <Book book="{book}" onMoveBook={this.props.onMoveBook}/>
-                        </li>
-                    ))}
+                        {showingBooks.map((book) => (
+                            <li key={book.id}>
+                                <Book book={book} onMoveBook={this.props.onMoveBook}/>
+                            </li>
+                        ))}
                     </ol>
                 </div>
             </div>
