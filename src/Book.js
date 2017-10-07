@@ -6,8 +6,7 @@ class Book extends Component {
         onMoveBook: PropTypes.func.isRequired
     }
     render() {
-        const book = this.props.book;
-        console.log('book', book);
+        const {book} = this.props;
         return (
             <div className="book">
                 <div className="book-top">

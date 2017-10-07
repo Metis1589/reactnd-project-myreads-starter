@@ -14,11 +14,11 @@ class BooksApp extends React.Component {
         BooksAPI.update(book, shelf)
             .then((books) => {
                 // New book
-                if (typeof(book.shelf) == 'undefined') {
+                if (typeof(book.shelf) === 'undefined') {
                     book.shelf = shelf
                     books = this.state.books
                     books.push(book)
-                    this.setState((state) => ({books}));
+                    this.setState({state : books});
                 }
                 else {
                     this.setState((state) => ({

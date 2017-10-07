@@ -17,9 +17,17 @@ class Search extends Component {
     }
     updateQuery = (query) => {
         this.setState({ query: query.trim(), loaded: false});
+        const shelfBooks = this.props.books;
         BooksAPI.search(query, 100)
             .then((books) => {
-                this.setState({ showingBooks: books, loaded: true });
+                const showingBooks = books.map((book) => {
+                    const shelfBook = shelfBooks.filter((shelfBook) => (shelfBook.id === book.id));
+                    if(shelfBook.length > 0){
+                        book.shelf = shelfBook[0]['shelf'];
+                    }
+                    return book;
+                });
+                this.setState({ showingBooks: showingBooks, loaded: true });
             })
             .catch((err) => {
                 console.error("error: " + err);

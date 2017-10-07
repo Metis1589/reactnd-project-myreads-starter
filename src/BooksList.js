@@ -7,7 +7,7 @@ import Spinner from 'react-spinner';
 class BooksList extends Component {
     static propTypes = {
         books: PropTypes.array.isRequired,
-        loaded: PropTypes.array.isRequired,
+        loaded: PropTypes.bool.isRequired,
         onMoveBook: PropTypes.func.isRequired
     }
     render() {
